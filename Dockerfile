@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 
+FROM ubuntu:24.10
 LABEL maintainer="Tim Chaubet"
 VOLUME ["/mnt/vrising/server", "/mnt/vrising/persistentdata"]
 
@@ -17,15 +17,17 @@ RUN useradd -m steam && cd /home/steam && \
     echo steam steam/license note '' | debconf-set-selections && \
     apt purge steam steamcmd && \
     apt install -y gdebi-core  \
-                   libgl1-mesa-glx:i386 \
-                   wget && \
+                   wget \
+                   winbind && \
     apt install -y steam \
                    steamcmd && \
     ln -s /usr/games/steamcmd /usr/bin/steamcmd
 #RUN apt install -y mono-complete
-RUN apt install -y wine \
-                   winbind \
-                   winetricks
+RUN mkdir -pm755 /etc/apt/keyrings && \
+    wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && \
+    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/noble/winehq-noble.sources && \
+    apt-get update -y && \
+    apt-get install -y --install-recommends wine-stable
 RUN apt install -y xserver-xorg \
                    xvfb
 RUN rm -rf /var/lib/apt/lists/* && \

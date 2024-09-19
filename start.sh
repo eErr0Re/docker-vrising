@@ -49,6 +49,9 @@ if [[ -n $QUERYPORT ]]; then
 	query_port=" -queryPort $QUERYPORT"
 fi
 
+#enable mods
+export WINEDLLOVERRIDES="winhttp=n,b"
+
 cleanup_logs
 
 mkdir -p /root/.steam 2>/dev/null
@@ -102,7 +105,7 @@ Xvfb :0 -screen 0 1024x768x16 &
 echo "Launching wine64 V Rising"
 echo " "
 v() {
-	DISPLAY=:0.0 wine64 /mnt/vrising/server/VRisingServer.exe -persistentDataPath $p -serverName "$SERVERNAME" "$override_savename" -logFile "$p/$logfile" "$game_port" "$query_port" 2>&1 &
+	DISPLAY=:0.0 wine /mnt/vrising/server/VRisingServer.exe -persistentDataPath $p -serverName "$SERVERNAME" "$override_savename" -logFile "$p/$logfile" "$game_port" "$query_port" 2>&1 &
 }
 v
 # Gets the PID of the last command
